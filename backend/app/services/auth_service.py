@@ -52,13 +52,20 @@ async def get_or_create_user(db: AsyncSession, google_user_info: dict) -> User:
         await db.flush()
         return user
 
+    # Determine role: first user becomes admin
+    from sqlalchemy import func
+
+    user_count_result = await db.execute(select(func.count(User.id)))
+    user_count = user_count_result.scalar_one()
+    role = UserRole.admin if user_count == 0 else UserRole.user
+
     # Create new user
     user = User(
         email=email,
         name=name,
         google_id=google_id,
         avatar_url=avatar_url,
-        role=UserRole.user,
+        role=role,
     )
     db.add(user)
     await db.flush()
