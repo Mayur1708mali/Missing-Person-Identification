@@ -4,7 +4,9 @@ import Browse from './pages/Browse';
 import PersonDetail from './pages/PersonDetail';
 import Report from './pages/Report';
 import Search from './pages/Search';
+import Admin from './pages/Admin';
 import ProtectedRoute from './components/ProtectedRoute';
+import AdminRoute from './components/AdminRoute';
 
 export default function AppRouter() {
   return (
@@ -26,6 +28,14 @@ export default function AppRouter() {
           <ProtectedRoute>
             <Search />
           </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin"
+        element={
+          <AdminRoute>
+            <Admin />
+          </AdminRoute>
         }
       />
     </Routes>
