@@ -19,5 +19,42 @@ services:
       timeout: 5s
       retries: 5
 
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: missing_person_backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-mpid_user}:${POSTGRES_PASSWORD:-mpid_password}@db:5432/${POSTGRES_DB:-missing_person_db}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-change-me-in-production}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
+      MEDIA_DIR: /app/media
+    ports:
+      - "8000:8000"
+    volumes:
+      - media_data:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+    profiles:
+      - full
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: missing_person_frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    profiles:
+      - full
+
 volumes:
   pgdata:
+  media_data:
