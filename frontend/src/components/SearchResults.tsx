@@ -18,8 +18,6 @@ export default function SearchResults({ matches }: SearchResultsProps) {
     );
   }
 
-  const apiBase = import.meta.env.VITE_API_BASE_URL || '';
-
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold text-gray-900">
@@ -34,7 +32,7 @@ export default function SearchResults({ matches }: SearchResultsProps) {
           >
             <div className="w-32 h-32 flex-shrink-0">
               <img
-                src={`${apiBase}${match.person.photo_url}`}
+                src={match.person.photo_url}
                 alt={match.person.full_name}
                 className="w-full h-full object-cover"
                 onError={(e) => {

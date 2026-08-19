@@ -21,8 +21,6 @@ export default function PersonDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const apiBase = import.meta.env.VITE_API_BASE_URL || '';
-
   useEffect(() => {
     const fetchPerson = async () => {
       try {
@@ -73,7 +71,7 @@ export default function PersonDetail() {
             {/* Photo */}
             <div className="md:w-1/3">
               <img
-                src={`${apiBase}${person.photo_url}`}
+                src={person.photo_url}
                 alt={person.full_name}
                 className="w-full h-full object-cover min-h-[300px]"
                 onError={(e) => {

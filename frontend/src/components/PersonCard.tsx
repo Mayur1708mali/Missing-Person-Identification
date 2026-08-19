@@ -18,8 +18,6 @@ const statusLabels: Record<string, string> = {
 };
 
 export default function PersonCard({ person }: PersonCardProps) {
-  const apiBase = import.meta.env.VITE_API_BASE_URL || '';
-
   return (
     <Link
       to={`/person/${person.id}`}
@@ -27,7 +25,7 @@ export default function PersonCard({ person }: PersonCardProps) {
     >
       <div className="aspect-square overflow-hidden bg-gray-200">
         <img
-          src={`${apiBase}${person.photo_url}`}
+          src={person.photo_url}
           alt={person.full_name}
           className="w-full h-full object-cover"
           onError={(e) => {
