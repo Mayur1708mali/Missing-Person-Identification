@@ -12,6 +12,7 @@ from app.schemas.missing_person import (
     MissingPersonListResponse,
 )
 from app.services import missing_person_service
+from app.services.face_service import process_and_store_face
 
 router = APIRouter(prefix="/api/missing-persons", tags=["Missing Persons"])
 
@@ -64,6 +65,11 @@ async def create_missing_person(
     person = await missing_person_service.create_missing_person(
         db, data=data, photo_url=photo_url, reported_by=current_user.id
     )
+
+    # Generate and store face embedding (non-blocking, best effort)
+    photo_filename = photo_url.replace("/media/", "")
+    await process_and_store_face(db, person.id, photo_filename)
+
     return person
 
 
