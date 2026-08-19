@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+venv/
+env/
+.venv/
+
+# Environment
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+frontend/node_modules/
+frontend/dist/
+
+# Media uploads
+backend/media/*
+!backend/media/.gitkeep
+
+# Docker
+docker-data/
+
+# Alembic
+backend/alembic/versions/__pycache__/
+
+# DeepFace
+.deepface/
