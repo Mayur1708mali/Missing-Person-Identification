@@ -1,8 +1,11 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy.exc import IntegrityError
 
 from app.config import settings
 from app.routers import auth, missing_persons, upload, search, admin
+from app.middleware.error_handler import global_exception_handler, integrity_error_handler
 from app.services.file_service import get_media_path
 
 app = FastAPI(
@@ -10,6 +13,23 @@ app = FastAPI(
     description="API for reporting and identifying missing persons using facial recognition",
     version="1.0.0",
 )
+
+# CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        settings.frontend_url,
+        "http://localhost:5173",
+        "http://localhost:3000",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Exception handlers
+app.add_exception_handler(Exception, global_exception_handler)
+app.add_exception_handler(IntegrityError, integrity_error_handler)
 
 # Register routers
 app.include_router(auth.router)
