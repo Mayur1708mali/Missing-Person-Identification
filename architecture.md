@@ -9,35 +9,35 @@
 ```mermaid
 flowchart TB
     subgraph Clients["Client Layer"]
-        Android["📱 Android App\n(Native Kotlin — Scaffold)"]
-        Web["🌐 React Frontend\n(Vite + TypeScript + TailwindCSS)"]
+        Android["Android App<br/>Native Kotlin Scaffold"]
+        Web["React Frontend<br/>Vite + TypeScript + TailwindCSS"]
     end
 
-    subgraph Backend["Backend Layer — FastAPI"]
-        API["FastAPI Application\n(Uvicorn ASGI Server · Port 8000)"]
+    subgraph Backend["Backend Layer - FastAPI"]
+        API["FastAPI Application<br/>Uvicorn ASGI Server - Port 8000"]
         CORS["CORS Middleware"]
         ErrHandler["Global Exception Handlers"]
-        StaticMedia["Static Media Mount\n(/media/*)"]
+        StaticMedia["Static Media Mount<br/>/media"]
     end
 
     subgraph Services["Service Layer"]
-        AuthSvc["Auth Service\n(Google OAuth Verification)"]
-        FaceSvc["Face Service\n(DeepFace + FaceNet)"]
-        FileSvc["File Service\n(Upload / Validate / Store)"]
-        PersonSvc["Missing Person Service\n(CRUD + Search + Stats)"]
+        AuthSvc["Auth Service<br/>Google OAuth Verification"]
+        FaceSvc["Face Service<br/>DeepFace + FaceNet"]
+        FileSvc["File Service<br/>Upload, Validate, Store"]
+        PersonSvc["Missing Person Service<br/>CRUD, Search, Stats"]
     end
 
     subgraph DataLayer["Data Layer"]
-        PG["PostgreSQL + pgvector\n(Port 5432)"]
-        MediaDisk["Media Storage\n(/app/media · Docker Volume)"]
+        PG["PostgreSQL + pgvector<br/>Port 5432"]
+        MediaDisk["Media Storage<br/>/app/media - Docker Volume"]
     end
 
     subgraph External["External Services"]
-        Google["Google OAuth2 API\n(Token Verification)"]
+        Google["Google OAuth2 API<br/>Token Verification"]
     end
 
-    Web -- "REST API (Axios)\n/api/*" --> API
-    Android -. "REST API (Planned)\n/api/*" .-> API
+    Web -->|REST API - Axios| API
+    Android -.->|Planned REST API| API
 
     API --> CORS
     API --> ErrHandler
@@ -48,7 +48,7 @@ flowchart TB
     API --> FileSvc
     API --> PersonSvc
 
-    AuthSvc -- "httpx async" --> Google
+    AuthSvc -->|httpx async| Google
     FaceSvc --> PG
     PersonSvc --> PG
     AuthSvc --> PG
@@ -107,45 +107,44 @@ flowchart LR
 
 ```mermaid
 flowchart TD
-    subgraph Routers["API Routers (/api)"]
-        R_Auth["🔐 /auth\nPOST /google"]
-        R_Persons["👤 /missing-persons\nGET / POST / PUT\nPATCH /status\nDELETE\nGET /statistics"]
-        R_Upload["📤 /upload\nPOST (multipart)"]
-        R_Search["🔍 /search\nPOST /face"]
-        R_Admin["🛡️ /admin\nGET /users\nPATCH /users/:id/role"]
+    subgraph Routers["API Routers - /api"]
+        R_Auth["/auth<br/>POST /google"]
+        R_Persons["/missing-persons<br/>GET, POST, PUT, DELETE<br/>PATCH /status<br/>GET /statistics"]
+        R_Upload["/upload<br/>POST multipart"]
+        R_Search["/search<br/>POST /face"]
+        R_Admin["/admin<br/>GET /users<br/>PATCH /users/:id/role"]
     end
 
     subgraph Dependencies["Dependency Injection"]
-        GetDB["get_db()\nAsyncSession"]
-        GetUser["get_current_user()\nJWT → User"]
-        ReqAuth["require_authenticated()"]
-        ReqAdmin["require_admin()\nRole Check"]
+        GetDB["get_db<br/>AsyncSession"]
+        GetUser["get_current_user<br/>JWT to User"]
+        ReqAuth["require_authenticated"]
+        ReqAdmin["require_admin<br/>Role Check"]
     end
 
     subgraph ServiceLayer["Services"]
-        S_Auth["auth_service\n• verify_google_token\n• get_or_create_user\n• get_user_by_id"]
-        S_Face["face_service\n• generate_embedding\n• store_embedding\n• process_and_store_face\n• search_by_face"]
-        S_File["file_service\n• validate_image\n• save_upload\n• get_file_path\n• delete_file"]
-        S_Person["missing_person_service\n• create / list / get / update\n• update_case_status\n• delete / get_statistics"]
+        S_Auth["auth_service<br/>verify_google_token<br/>get_or_create_user<br/>get_user_by_id"]
+        S_Face["face_service<br/>generate_embedding<br/>store_embedding<br/>process_and_store_face<br/>search_by_face"]
+        S_File["file_service<br/>validate_image<br/>save_upload<br/>get_file_path<br/>delete_file"]
+        S_Person["missing_person_service<br/>CRUD operations<br/>update_case_status<br/>delete, get_statistics"]
     end
 
     subgraph Utils["Utilities"]
-        JWT["jwt.py\n• create_access_token\n• decode_access_token"]
+        JWT["jwt.py<br/>create_access_token<br/>decode_access_token"]
     end
 
     subgraph Middleware["Middleware"]
-        EH["error_handler\n• global_exception_handler\n• integrity_error_handler"]
+        EH["error_handler<br/>global_exception_handler<br/>integrity_error_handler"]
     end
 
-    subgraph Models["ORM Models (SQLAlchemy)"]
-        M_User["User\n(users table)"]
-        M_Person["MissingPerson\n(missing_persons table)"]
-        M_Embed["FaceEmbedding\n(face_embeddings table)\nVector(128)"]
+    subgraph Models["ORM Models - SQLAlchemy"]
+        M_User["User<br/>users table"]
+        M_Person["MissingPerson<br/>missing_persons table"]
+        M_Embed["FaceEmbedding<br/>face_embeddings table<br/>Vector 128"]
     end
 
-    subgraph Schemas["Pydantic Schemas"]
-        Sch_Person["MissingPerson\nCreate / Update / Response\nStatusUpdate / ListResponse"]
-        Sch_User["UserResponse\nUserUpdateRole"]
+    subgraph Storage["Storage"]
+        MediaDisk["Media Files<br/>Disk media folder"]
     end
 
     R_Auth --> S_Auth
@@ -164,7 +163,7 @@ flowchart TD
     S_Person --> M_Person
     S_Face --> M_Embed
     S_Face --> M_Person
-    S_File --> MediaDisk["Disk (media/)"]
+    S_File --> MediaDisk
 
     R_Persons --> GetDB
     R_Persons --> GetUser
@@ -179,9 +178,9 @@ flowchart TD
     style Dependencies fill:#f1f8e9,stroke:#33691e
     style ServiceLayer fill:#fff3e0,stroke:#e65100
     style Models fill:#fce4ec,stroke:#c62828
-    style Schemas fill:#e8eaf6,stroke:#283593
     style Utils fill:#f3e5f5,stroke:#6a1b9a
     style Middleware fill:#efebe9,stroke:#4e342e
+    style Storage fill:#fff9c4,stroke:#f57f17
 ```
 
 ---
@@ -192,28 +191,28 @@ flowchart TD
 erDiagram
     USERS {
         int id PK
-        string email UK "indexed"
+        string email UK
         string name
         string google_id UK
-        string avatar_url "nullable"
-        enum role "admin | user"
-        datetime created_at "server default now()"
+        string avatar_url
+        string role
+        datetime created_at
     }
 
     MISSING_PERSONS {
         int id PK
-        string full_name "indexed"
-        int age "nullable"
-        date date_of_birth "nullable"
-        enum gender "male | female | other"
-        string photo_url "nullable"
+        string full_name
+        int age
+        date date_of_birth
+        string gender
+        string photo_url
         string last_seen_location
-        date last_seen_date "nullable"
-        float height "nullable"
-        float weight "nullable"
-        string distinguishing_marks "nullable"
-        string reporter_contact "nullable"
-        enum case_status "missing | found | under_investigation"
+        date last_seen_date
+        float height
+        float weight
+        string distinguishing_marks
+        string reporter_contact
+        string case_status
         int reported_by FK
         datetime created_at
         datetime updated_at
@@ -221,12 +220,12 @@ erDiagram
 
     FACE_EMBEDDINGS {
         int id PK
-        int missing_person_id FK UK "CASCADE delete"
-        vector_128 embedding "pgvector Vector(128)"
+        int missing_person_id FK
+        string embedding
     }
 
-    USERS ||--o{ MISSING_PERSONS : "reports"
-    MISSING_PERSONS ||--o| FACE_EMBEDDINGS : "has face"
+    USERS ||--o{ MISSING_PERSONS : reports
+    MISSING_PERSONS ||--o| FACE_EMBEDDINGS : has
 ```
 
 ---
@@ -285,31 +284,31 @@ sequenceDiagram
 
 ```mermaid
 flowchart TD
-    subgraph Registration["📋 Case Registration Pipeline"]
-        A1["User submits report\nwith photo"] --> A2["POST /api/upload\n(multipart/form-data)"]
-        A2 --> A3["file_service.save_upload()\n• Validate type & size (≤5MB)\n• Generate UUID filename\n• Write to /media/"]
-        A3 --> A4["POST /api/missing-persons\n(JSON + photo_url)"]
-        A4 --> A5["missing_person_service\n.create_missing_person()"]
-        A5 --> A6["face_service\n.process_and_store_face()"]
-        A6 --> A7["DeepFace.represent()\nModel: FaceNet\nDetector: OpenCV"]
-        A7 --> A8{"Face\ndetected?"}
-        A8 -- Yes --> A9["128-dim embedding vector"]
-        A9 --> A10["face_service.store_embedding()\nINSERT INTO face_embeddings"]
-        A10 --> A11["✅ Case created\nwith face indexed"]
-        A8 -- No --> A12["⚠️ Case created\nwithout embedding"]
+    subgraph Registration["Case Registration Pipeline"]
+        A1["User submits report with photo"] --> A2["POST /api/upload<br/>multipart/form-data"]
+        A2 --> A3["file_service.save_upload<br/>Validate type and size max 5MB<br/>Generate UUID filename<br/>Write to media directory"]
+        A3 --> A4["POST /api/missing-persons<br/>JSON and photo_url"]
+        A4 --> A5["missing_person_service.create_missing_person"]
+        A5 --> A6["face_service.process_and_store_face"]
+        A6 --> A7["DeepFace.represent<br/>Model: FaceNet, Detector: OpenCV"]
+        A7 --> A8{"Face detected?"}
+        A8 -->|Yes| A9["128-dim embedding vector"]
+        A9 --> A10["face_service.store_embedding<br/>INSERT INTO face_embeddings"]
+        A10 --> A11["Case created with face indexed"]
+        A8 -->|No| A12["Case created without embedding"]
     end
 
-    subgraph SearchPipeline["🔍 Face Search Pipeline"]
-        B1["User uploads query photo"] --> B2["POST /api/search/face\n(multipart + threshold + limit)"]
-        B2 --> B3["file_service.validate_image()\nWrite temp file"]
-        B3 --> B4["face_service.search_by_face()"]
-        B4 --> B5["DeepFace.represent()\nGenerate query embedding"]
-        B5 --> B6{"Face\ndetected?"}
-        B6 -- Yes --> B7["pgvector cosine_distance\nquery against all embeddings\nWHERE distance < threshold"]
-        B7 --> B8["JOIN missing_persons\nORDER BY distance ASC\nLIMIT N"]
-        B8 --> B9["Calculate similarity %\n= (1 - distance) × 100"]
-        B9 --> B10["🎯 Return matched persons\nwith similarity scores"]
-        B6 -- No --> B11["❌ No face detected\nin uploaded image"]
+    subgraph SearchPipeline["Face Search Pipeline"]
+        B1["User uploads query photo"] --> B2["POST /api/search/face<br/>multipart, threshold, limit"]
+        B2 --> B3["file_service.validate_image<br/>Write temp file"]
+        B3 --> B4["face_service.search_by_face"]
+        B4 --> B5["DeepFace.represent<br/>Generate query embedding"]
+        B5 --> B6{"Face detected?"}
+        B6 -->|Yes| B7["pgvector cosine_distance query<br/>Filter distance below threshold"]
+        B7 --> B8["JOIN missing_persons<br/>ORDER BY distance ASC<br/>LIMIT N"]
+        B8 --> B9["Calculate similarity score<br/>Score = 1 minus distance times 100"]
+        B9 --> B10["Return matched persons with similarity scores"]
+        B6 -->|No| B11["No face detected in uploaded image"]
         B2 --> B12["Cleanup: delete temp file"]
     end
 
